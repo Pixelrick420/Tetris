@@ -6,6 +6,7 @@ A simple Tetris game implemented in C++ using basic console graphics and logic.
 - Fully functional Tetris gameplay.
 - Rotatable tetromino pieces in various shapes.
 - Score tracking based on cleared lines.
+- Next Piece overlay
 - Game-over detection.
 - Minimalistic text-based graphics.
 
@@ -23,6 +24,13 @@ g++ -o Tetris Tetris.cpp
 3. Run the compiled executable:
 ```
 ./Tetris
+```
+
+**or**
+1. Download the .exe file to your machine.
+2. Run it using terminal or cmd using :
+```
+start Tetris.exe
 ```
 
 **Gameplay Instructions**
@@ -54,7 +62,7 @@ g++ -o Tetris Tetris.cpp
 
 **Known Limitations**
 - This game is limited to Windows systems due to its use of WinAPI for console handling.
-- The game logic does not include advanced Tetris mechanics like T-spins, hold functionality or next piece.
+- The game logic does not include advanced Tetris mechanics like T-spins, hold functionality.
 
 **Future Improvements**
 - Add a hold queue to allow players to swap pieces.
