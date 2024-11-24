@@ -1,9 +1,7 @@
 #include <iostream>
-#include <thread>
 #include <cstdlib>
 #include <chrono>
 #include <conio.h>
-#include <vector>
 #include <windows.h>
 
 int screenWidth = 80;
@@ -282,9 +280,9 @@ void gameLoop()
             for (int k = 0; k < 6; k++)
                 bKey[k] = (0x8000 & GetAsyncKeyState((unsigned char)("\x27\x25\x28XZQ"[k]))) != 0;
 
-            if ((level > 4 || gametick % 2 == 0) && bKey[0] && canMove(currentPiece, currentRotation, currentX + 1, currentY))
+            if ((level > 5 || gametick % 2 == 0) && bKey[0] && canMove(currentPiece, currentRotation, currentX + 1, currentY))
                 currentX++;
-            if ((level > 4 || gametick % 2 == 0) && bKey[1] && canMove(currentPiece, currentRotation, currentX - 1, currentY))
+            if ((level > 5 || gametick % 2 == 0) && bKey[1] && canMove(currentPiece, currentRotation, currentX - 1, currentY))
                 currentX--;
             if (gametick % 3 == 0 && bKey[2] && canMove(currentPiece, currentRotation, currentX, currentY + 1))
             {
@@ -326,7 +324,7 @@ void gameLoop()
                     if (score >= (scoreThreshold[level]) && level < 9)
                     {
                         level++;
-                        animationticks = 7;
+                        animationticks = 15;
                     }
                     displayBoard(currentPiece, currentRotation, currentX, currentY, ((animationticks-- > 0) ? "LEVEL UP" : ""));
 
