@@ -10,7 +10,7 @@ A simple Tetris game implemented in C++ using basic console graphics and logic.
 - Level based scoring system and colour schemes.
 - Game speed increases after each level.
 
-**Preview of the game**
+**Preview of the game** (very proffesional gameplay)
 
 ![image](https://github.com/user-attachments/assets/87b0d18e-5900-4630-95c5-1150d916b6e2)   ![image](https://github.com/user-attachments/assets/909c5aef-0e01-451b-acc5-ff4ac3994d5d)
 
@@ -53,7 +53,8 @@ start Tetris.exe
 - 2 lines: 100 
 - 3 lines: 200 
 - 4 lines: 400 
-The above numbers are added after applying level multiplier.
+The score is updated after applying level multiplier.
+Pushdown points are also awarded based on level.
 
 **Code Highlights**
 - Tetromino rotation is implemented with a rotation matrix to handle different orientations.
