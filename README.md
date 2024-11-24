@@ -4,15 +4,15 @@ A simple Tetris game implemented in C++ using basic console graphics and logic.
 
 **Features**
 - Fully functional Tetris gameplay.
-- Rotatable tetromino pieces in various shapes.
 - Score tracking based on cleared lines.
 - Next Piece overlay
-- Game-over detection.
-- Minimalistic text-based graphics.
+- Coloured text-based graphics.
+- Level based scoring system and colour schemes.
+- Game speed increases after each level.
 
 **Preview of the game**
 
-![image](https://github.com/user-attachments/assets/1039b4a3-5657-4383-bf00-910e13a00cac)
+![image](https://github.com/user-attachments/assets/87b0d18e-5900-4630-95c5-1150d916b6e2)   ![image](https://github.com/user-attachments/assets/909c5aef-0e01-451b-acc5-ff4ac3994d5d)
 
 **Requirements**
 - A Windows environment with support for WinAPI (e.g., Windows 10 or newer).
@@ -41,18 +41,19 @@ start Tetris.exe
 - Use the following keys to control the game:
 - Right Arrow: Move the piece to the right.
 - Left Arrow: Move the piece to the left.
+- Down Arrow: Move the piece down.
 - Z: Rotate the piece counterclockwise.
 - X: Rotate the piece clockwise.
-- Q: Quit the game.
 - Clear lines by filling rows completely with blocks to earn points.
 - The game ends when a new piece cannot spawn at the top of the board.
 
 **Scoring**
 - Points are awarded for clearing lines:
-- 1 line: 50 points
-- 2 lines: 100 points
-- 3 lines: 200 points
-- 4 lines: 400 points
+- 1 line: 50 
+- 2 lines: 100 
+- 3 lines: 200 
+- 4 lines: 400 
+The above numbers are added after applying level multiplier.
 
 **Code Highlights**
 - Tetromino rotation is implemented with a rotation matrix to handle different orientations.
