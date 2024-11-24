@@ -10,6 +10,10 @@ A simple Tetris game implemented in C++ using basic console graphics and logic.
 - Game-over detection.
 - Minimalistic text-based graphics.
 
+**Preview of the game**
+
+![image](https://github.com/user-attachments/assets/1039b4a3-5657-4383-bf00-910e13a00cac)
+
 **Requirements**
 - A Windows environment with support for WinAPI (e.g., Windows 10 or newer).
 - A C++ compiler (e.g., g++, clang++).
