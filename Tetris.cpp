@@ -7,23 +7,33 @@
 #include <windows.h>
 
 int screenWidth = 80;
-int screenHeight = 30;
+int screenHeight = 40;
 
 std::wstring tetromino[7];
 
-int width = 10;
-int height = 20;
-unsigned int board[20][10] = {0}; // 0 empty, 1 block
+const int width = 10;
+const int height = 25;
+unsigned int board[height][width] = {0}; // 0 empty, 1 block
 
 void init()
 {
-    tetromino[0].append(L"..■...■...■...■."); // line
-    tetromino[1].append(L".....■...■...■■."); // L
-    tetromino[2].append(L"......■...■..■■."); // J
+    tetromino[0].append(L"........■■■■...."); // line
+    tetromino[1].append(L".....■■■...■...."); // L
+    tetromino[2].append(L".....■■■.■......"); // J
     tetromino[3].append(L".....■■..■■....."); // Square
     tetromino[4].append(L"......■■.■■....."); // S
-    tetromino[5].append(L"......■..■■...■."); // T
+    tetromino[5].append(L".....■■■..■....."); // T
     tetromino[6].append(L".....■■...■■...."); // Z
+
+    std::cout << "\033[H";
+    for (int i = 0; i < screenHeight; i++)
+    {
+        for (int j = 0; j < screenWidth; j++)
+        {
+            std::cout << "  ";
+        }
+    }
+    std::cout << "\033[H";
 }
 
 int rotatePiece(int px, int py, int r)
@@ -70,24 +80,6 @@ const int COLORS[8] = {
     15, // T
     4   // Z
 };
-
-void displayBoard()
-{
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    std::cout << "\033[H";
-
-    for (int i = 0; i < height; i++)
-    {
-        for (int j = 0; j < width; j++)
-        {
-            SetConsoleTextAttribute(hConsole, COLORS[board[i][j]]);
-            std::cout << (board[i][j] == 0 ? ". " : "[]");
-            SetConsoleTextAttribute(hConsole, 7);
-        }
-        std::cout << "\n";
-    }
-    SetConsoleTextAttribute(hConsole, 7);
-}
 
 bool canMove(int piece, int rotation, int x, int y)
 {
@@ -159,18 +151,63 @@ int clearLines()
     return ((1 << linesCleared) * 50);
 }
 
+int nextPiece;
+
+void displayBoard(int currentPiece, int currentRotation, int currentX, int currentY)
+{
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    std::cout << "\033[H";
+
+    for (int i = 0; i < height; i++)
+    {
+        for (int j = 0; j < width; j++)
+        {
+            SetConsoleTextAttribute(hConsole, COLORS[board[i][j]]);
+            std::cout << (board[i][j] == 0 ? " ." : "[]");
+            SetConsoleTextAttribute(hConsole, 7);
+        }
+        std::cout << "  ";
+
+        if (i < 4)
+        {
+            for (int px = 0; px < 4; px++)
+            {
+                int pieceIndex = rotatePiece(px, i, 0);
+                if (tetromino[nextPiece][pieceIndex] != L'.')
+                {
+                    SetConsoleTextAttribute(hConsole, COLORS[nextPiece + 1]);
+                    std::cout << "[]";
+                }
+                else
+                {
+                    std::cout << "  ";
+                }
+            }
+        }
+
+        if (i == 4)
+        {
+            std::cout << "Next Piece ";
+        }
+
+        std::cout << "\n";
+    }
+
+    SetConsoleTextAttribute(hConsole, 7);
+}
+
 void gameLoop()
 {
     int score = 0;
     bool rotateLeft = false;
     bool rotateRight = false;
+    const int targetFrameTime = 40;
 
-    const int targetFrameTime = 80;
-    auto lastFrameTime = std::chrono::steady_clock::now();
+    int currentPiece = rand() % 7;
+    nextPiece = rand() % 7;
 
     while (true)
     {
-        int currentPiece = rand() % 7;
         int currentRotation = 0;
         int currentX = width / 2 - 2;
         int currentY = 0;
@@ -219,12 +256,12 @@ void gameLoop()
             {
                 placePiece(currentPiece, currentRotation, currentX, currentY, false);
                 score += clearLines();
-                displayBoard();
+                displayBoard(currentPiece, currentRotation, currentX, currentY);
                 break;
             }
 
             placePiece(currentPiece, currentRotation, currentX, currentY, false);
-            displayBoard();
+            displayBoard(currentPiece, currentRotation, currentX, currentY);
 
             auto frameEnd = std::chrono::steady_clock::now();
             auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(frameEnd - frameStart).count();
@@ -233,7 +270,10 @@ void gameLoop()
                 Sleep(sleepDuration);
         }
 
-        if (!canMove(currentPiece, currentRotation, width / 2 - 2, 0))
+        currentPiece = nextPiece;
+        nextPiece = rand() % 7;
+
+        if (!canMove(currentPiece, 0, width / 2 - 2, 0))
         {
             std::cout << "Game Over! Final Score: " << score << "\n";
             break;
