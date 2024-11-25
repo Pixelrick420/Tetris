@@ -72,5 +72,5 @@ Pushdown points are also awarded based on level.
 
 ### Future Improvements
 - Add a hold queue to allow players to swap pieces.
-- Implement additional gameplay mechanics such as soft drop and hard drop.
+- Implement additional gameplay mechanics such as hard drop.
 - Port the game to be platform-independent.
