@@ -3,6 +3,8 @@
 #include <chrono>
 #include <conio.h>
 #include <windows.h>
+#include <set>
+#include <mmsystem.h>
 
 int screenWidth = 80;
 int screenHeight = 40;
@@ -16,10 +18,15 @@ unsigned int board[height][width] = {0}; // 0 empty, 1 block
 int level = 0;
 int score = 0;
 int scoreThreshold[10] = {500, 1750, 4000, 9000, 15000, 25000, 40000, 80000, 150000, 500000};
+int linesCleared = 0;
+int lineThreshold = 15;
+
+std::set<int> lineNumbers;
+int nextPiece;
 
 void init()
 {
-    tetromino[0].append(L"........■■■■...."); // line
+    tetromino[0].append(L"....■■■■........"); // line
     tetromino[1].append(L".....■■■...■...."); // L
     tetromino[2].append(L".....■■■.■......"); // J
     tetromino[3].append(L".....■■..■■....."); // Square
@@ -43,11 +50,11 @@ int rotatePiece(int px, int py, int r)
     switch (r % 4)
     {
     case 0:
-        return py * 4 + px; // 0 degrees
+        return py * 4 + px; // 0 deg
     case 1:
-        return 12 + py - (px * 4); // 90 degrees
+        return 12 + py - (px * 4); // 90 deg
     case 2:
-        return 15 - (py * 4) - px; // 180 degrees
+        return 15 - (py * 4) - px; // 180 deg
     case 3:
         return 3 - py + (px * 4); // 270 degrees
     }
@@ -160,11 +167,81 @@ void placePiece(int piece, int rotation, int x, int y, bool remove)
     }
 }
 
+void displayBoard(std::string message)
+{
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    std::cout << "\033[H";
+
+    for (int i = 0; i < height; i++)
+    {
+        std::cout << "    ##";
+        for (int j = 0; j < width; j++)
+        {
+            if (lineNumbers.count(i) > 0)
+            {
+                std::cout << "==";
+            }
+            else
+            {
+                SetConsoleTextAttribute(hConsole, COLORS[level % 5][board[i][j]]);
+                std::cout << (board[i][j] == 0 ? " ." : "[]");
+                SetConsoleTextAttribute(hConsole, 7);
+            }
+        }
+        std::cout << "##";
+        if ((i > 7) && (i < 11))
+        {
+            std::cout << ((nextPiece == 0 || nextPiece == 3) ? "  " : " ");
+            for (int px = 0; px < 4; px++)
+            {
+                int pieceIndex = rotatePiece(px, i - 7, 0);
+                if (tetromino[nextPiece][pieceIndex] != L'.')
+                {
+                    SetConsoleTextAttribute(hConsole, COLORS[level % 5][nextPiece + 1]);
+                    std::cout << "[]";
+                    SetConsoleTextAttribute(hConsole, 7);
+                }
+                else
+                {
+                    std::cout << "  ";
+                }
+            }
+            std::cout << "      ";
+        }
+
+        if (i == 6)
+        {
+            std::cout << "  NEXT PIECE ";
+        }
+        if (i == 1)
+        {
+            std::cout << "  LINES : " << linesCleared;
+        }
+        if (i == 2)
+        {
+            if (message.empty())
+            {
+                std::cout << "  LEVEL : " << level;
+            }
+            else
+            {
+                std::cout << message;
+            }
+        }
+        if (i == 3)
+        {
+            std::cout << "  SCORE : " << score;
+        }
+        std::cout << "\n";
+    }
+    std::cout << "    ########################";
+
+    SetConsoleTextAttribute(hConsole, 7);
+}
+
 int clearLines()
 {
-    int targetRow = height - 1;
-    int linesCleared = 0;
-
+    int clearLines = 0;
     for (int i = height - 1; i >= 0; i--)
     {
         bool isFull = true;
@@ -177,80 +254,39 @@ int clearLines()
             }
         }
 
-        if (!isFull)
+        if (isFull)
         {
-            for (int j = 0; j < width; j++)
-            {
-                board[targetRow][j] = board[i][j];
-            }
-            targetRow--;
-        }
-        else
-        {
-            linesCleared++;
+            lineNumbers.insert(i);
+            clearLines++;
         }
     }
 
-    return ((1 << linesCleared) * 50 * (level + 1));
-}
-
-int nextPiece;
-
-void displayBoard(int currentPiece, int currentRotation, int currentX, int currentY, std::string message)
-{
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    std::cout << "\033[H";
-
-    for (int i = 0; i < height; i++)
+    displayBoard("");
+    if (clearLines > 0)
     {
-        for (int j = 0; j < width; j++)
+        Sleep(60);
+    }
+    int erased = 0;
+    for (int i = height - 1; i >= 0; i--)
+    {
+        if (lineNumbers.count(i - erased) > 0)
         {
-            SetConsoleTextAttribute(hConsole, COLORS[level % 5][board[i][j]]);
-            std::cout << (board[i][j] == 0 ? " ." : "[]");
-            SetConsoleTextAttribute(hConsole, 7);
-        }
-        std::cout << "  ";
-
-        if ((i >= 4) && (i < 8))
-        {
-            for (int px = 0; px < 4; px++)
+            lineNumbers.erase(i);
+            erased++;
+            for (int j = i; j > 0; j--)
             {
-                int pieceIndex = rotatePiece(px, i - 4, 0);
-                if (tetromino[nextPiece][pieceIndex] != L'.')
+                for (int k = 0; k < width; k++)
                 {
-                    SetConsoleTextAttribute(hConsole, COLORS[level % 5][nextPiece + 1]);
-                    std::cout << "[]";
-                }
-                else
-                {
-                    std::cout << "  ";
+                    board[j][k] = board[j - 1][k];
                 }
             }
+            i++;
         }
-
-        if (i == 3)
-        {
-            std::cout << "NEXT PIECE ";
-        }
-        if (i == 1)
-        {
-            if (message.empty())
-            {
-                std::cout << "LEVEL : " << level;
-            }
-            else
-            {
-                std::cout << message;
-            }
-        }
-        if (i == 2)
-        {
-            std::cout << "SCORE : " << score;
-        }
-        std::cout << "\n";
     }
 
-    SetConsoleTextAttribute(hConsole, 7);
+    lineNumbers.clear();
+    linesCleared += clearLines;
+    return ((1 << clearLines) * 50 * (level + 1));
 }
 
 void gameLoop()
@@ -280,9 +316,9 @@ void gameLoop()
             for (int k = 0; k < 6; k++)
                 bKey[k] = (0x8000 & GetAsyncKeyState((unsigned char)("\x27\x25\x28XZQ"[k]))) != 0;
 
-            if ((level > 5 || gametick % 2 == 0) && bKey[0] && canMove(currentPiece, currentRotation, currentX + 1, currentY))
+            if ((level > 6 || gametick % 2 == 0) && bKey[0] && canMove(currentPiece, currentRotation, currentX + 1, currentY))
                 currentX++;
-            if ((level > 5 || gametick % 2 == 0) && bKey[1] && canMove(currentPiece, currentRotation, currentX - 1, currentY))
+            if ((level > 6 || gametick % 2 == 0) && bKey[1] && canMove(currentPiece, currentRotation, currentX - 1, currentY))
                 currentX--;
             if (gametick % 3 == 0 && bKey[2] && canMove(currentPiece, currentRotation, currentX, currentY + 1))
             {
@@ -313,7 +349,7 @@ void gameLoop()
             if (bKey[5])
                 break;
 
-            if (gametick % ((10 - level) / 2) == 0 || bKey[2])
+            if ((level < 9 && gametick % ((int)((10 - level) / 1.2)) == 0) || level >= 9 || bKey[2])
             {
                 if (canMove(currentPiece, currentRotation, currentX, currentY + 1))
                     currentY++;
@@ -321,19 +357,19 @@ void gameLoop()
                 {
                     placePiece(currentPiece, currentRotation, currentX, currentY, false);
                     score += clearLines();
-                    if (score >= (scoreThreshold[level]) && level < 9)
+                    if (linesCleared >= (lineThreshold * (level + 1)))
                     {
                         level++;
                         animationticks = 15;
                     }
-                    displayBoard(currentPiece, currentRotation, currentX, currentY, ((animationticks-- > 0) ? "LEVEL UP" : ""));
+                    displayBoard(((animationticks-- > 0) ? "LEVEL UP" : ""));
 
                     break;
                 }
             }
 
             placePiece(currentPiece, currentRotation, currentX, currentY, false);
-            displayBoard(currentPiece, currentRotation, currentX, currentY, ((animationticks-- > 0) ? "LEVEL UP" : ""));
+            displayBoard(((animationticks-- > 0) ? "LEVEL UP" : ""));
 
             auto frameEnd = std::chrono::steady_clock::now();
             auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(frameEnd - frameStart).count();
@@ -342,13 +378,13 @@ void gameLoop()
                 Sleep(sleepDuration);
             gametick++;
         }
-
         currentPiece = nextPiece;
         nextPiece = rand() % 7;
 
         if (!canMove(currentPiece, 0, width / 2 - 2, 0))
         {
-            std::cout << "\nGAME OVER!\nFINAL SCORE : " << score << "\n";
+            displayBoard(((animationticks-- > 0) ? "LEVEL UP" : ""));
+            std::cout << "\n           GAME OVER!\n       FINAL SCORE : " << score << "\n";
             break;
         }
     }
