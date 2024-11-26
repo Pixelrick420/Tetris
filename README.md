@@ -4,10 +4,10 @@ A simple Tetris game implemented in C++ using basic console graphics and logic. 
 
 ### Features
 - Fully functional Tetris gameplay.
-- Score tracking based on cleared lines.
+- Delayed Auto Shift input handling.(kind of)
 - Next Piece overlay
 - Coloured text-based graphics.
-- Level based scoring system and colour schemes.
+- Level based scoring system, game speed and colour schemes.
 - Game speed increases after each level.
 
 ### Preview of the game (very proffesional gameplay)
@@ -35,7 +35,7 @@ g++ -o Tetris Tetris.cpp
 1. Download the .exe file to your machine.
 2. Run it using terminal or cmd using :
 ```
-start Tetris.exe
+Tetris.exe
 ```
 
 ### Gameplay Instructions
@@ -72,6 +72,5 @@ Pushdown points are also awarded based on level.
 - The game logic does not include advanced Tetris mechanics like T-spins, hold functionality.
 
 ### Future Improvements
-- Add a hold queue to allow players to swap pieces.
-- Implement additional gameplay mechanics such as hard drop.
+- Implement additional gameplay mechanics such as hard drop and hold queue.
 - Port the game to be platform-independent.
