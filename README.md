@@ -12,7 +12,7 @@ A simple Tetris game implemented in C++ using basic console graphics and logic. 
 
 ### Preview of the game (very proffesional gameplay)
 
-![image](https://github.com/user-attachments/assets/ab3ce152-c78e-4726-bf3b-1d94fb66c282)  ![image](https://github.com/user-attachments/assets/2cdec77c-2874-417e-b86e-e03157433ee6)
+![image](https://github.com/user-attachments/assets/ab3ce152-c78e-4726-bf3b-1d94fb66c282)        ![image](https://github.com/user-attachments/assets/2cdec77c-2874-417e-b86e-e03157433ee6)
 
 
 ### Requirements
