@@ -17,33 +17,19 @@ unsigned int board[height][width] = {0}; // 0 empty, 1 block
 
 int level = 0;
 int score = 0;
-int scoreThreshold[10] = {500, 1750, 4000, 9000, 15000, 25000, 40000, 80000, 150000, 500000};
 int linesCleared = 0;
-int lineThreshold = 15;
+int lineThreshold = 12;
+int pixelrick = 148796;
 
 std::set<int> lineNumbers;
 int nextPiece;
 
-void init()
-{
-    tetromino[0].append(L"....■■■■........"); // line
-    tetromino[1].append(L".....■■■...■...."); // L
-    tetromino[2].append(L".....■■■.■......"); // J
-    tetromino[3].append(L".....■■..■■....."); // Square
-    tetromino[4].append(L"......■■.■■....."); // S
-    tetromino[5].append(L".....■■■..■....."); // T
-    tetromino[6].append(L".....■■...■■...."); // Z
-
-    std::cout << "\033[H";
-    for (int i = 0; i < screenHeight; i++)
-    {
-        for (int j = 0; j < screenWidth; j++)
-        {
-            std::cout << "  ";
-        }
-    }
-    std::cout << "\033[H";
-}
+const int COLORS[5][8] = {
+    {0, 15, 2, 4, 15, 4, 15, 2},
+    {0, 11, 15, 12, 11, 12, 11, 15},
+    {0, 13, 11, 7, 13, 7, 13, 11},
+    {0, 2, 6, 15, 2, 15, 2, 6},
+    {0, 15, 4, 1, 15, 1, 15, 4}};
 
 int rotatePiece(int px, int py, int r)
 {
@@ -59,6 +45,13 @@ int rotatePiece(int px, int py, int r)
         return 3 - py + (px * 4); // 270 degrees
     }
     return 0;
+}
+
+void moveCursor(short x, short y)
+{
+    HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+    COORD position = {x, y};
+    SetConsoleCursorPosition(consoleHandle, position);
 }
 
 void hideCursor()
@@ -79,57 +72,28 @@ void showCursor()
     SetConsoleCursorInfo(consoleHandle, &info);
 }
 
-const int COLORS[5][8] = {
+void init()
+{
+    tetromino[0].append(L"....■■■■........"); // line
+    tetromino[1].append(L".....■■■...■...."); // L
+    tetromino[2].append(L".....■■■.■......"); // J
+    tetromino[3].append(L".....■■..■■....."); // Square
+    tetromino[4].append(L"......■■.■■....."); // S
+    tetromino[5].append(L".....■■■..■....."); // T
+    tetromino[6].append(L".....■■...■■...."); // Z
+
+    moveCursor(0, 0);
+    ;
+    for (int i = 0; i < screenHeight; i++)
     {
-        0,  // Black/Empty
-        15, // Line
-        2,  // L
-        4,  // J
-        15, // Square
-        4,  // S
-        15, // T
-        2   // Z
-    },
-    {
-        0,  // Black/Empty
-        11, // Line
-        15, // L
-        12, // J
-        11, // Square
-        12, // S
-        11, // T
-        15  // Z
-    },
-    {
-        0,  // Black/Empty
-        13, // Line
-        11, // L
-        7,  // J
-        13, // Square
-        7,  // S
-        13, // T
-        11  // Z
-    },
-    {
-        0,  // Black/Empty
-        2,  // Line
-        6,  // L
-        15, // J
-        2,  // Square
-        15, // S
-        2,  // T
-        6   // Z
-    },
-    {
-        0,  // Black/Empty
-        15, // Line
-        4,  // L
-        1,  // J
-        15, // Square
-        1,  // S
-        15, // T
-        4   // Z
-    }};
+        for (int j = 0; j < screenWidth; j++)
+        {
+            std::cout << "  ";
+        }
+    }
+    moveCursor(0, 0);
+    ;
+}
 
 bool canMove(int piece, int rotation, int x, int y)
 {
@@ -170,7 +134,7 @@ void placePiece(int piece, int rotation, int x, int y, bool remove)
 void displayBoard(std::string message)
 {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    std::cout << "\033[H";
+    moveCursor(0, 0);
 
     for (int i = 0; i < height; i++)
     {
@@ -293,6 +257,8 @@ void gameLoop()
 {
     bool rotateLeft = false;
     bool rotateRight = false;
+    int movedLeft = -1;
+    int movedRight = -1;
     const int targetFrameTime = 40;
 
     int currentPiece = rand() % 7;
@@ -316,10 +282,26 @@ void gameLoop()
             for (int k = 0; k < 6; k++)
                 bKey[k] = (0x8000 & GetAsyncKeyState((unsigned char)("\x27\x25\x28XZQ"[k]))) != 0;
 
-            if ((level > 6 || gametick % 2 == 0) && bKey[0] && canMove(currentPiece, currentRotation, currentX + 1, currentY))
+            if (bKey[0])
+                movedRight++;
+            else
+                movedRight = -1;
+
+            if ((movedRight == 0 || movedRight > 3) && canMove(currentPiece, currentRotation, currentX + 1, currentY))
+            {
                 currentX++;
-            if ((level > 6 || gametick % 2 == 0) && bKey[1] && canMove(currentPiece, currentRotation, currentX - 1, currentY))
+            }
+
+            if (bKey[1])
+                movedLeft++;
+            else
+                movedLeft = -1;
+
+            if ((movedLeft == 0 || movedLeft > 3) && canMove(currentPiece, currentRotation, currentX - 1, currentY))
+            {
                 currentX--;
+            }
+
             if (gametick % 3 == 0 && bKey[2] && canMove(currentPiece, currentRotation, currentX, currentY + 1))
             {
                 currentY++;
@@ -349,7 +331,7 @@ void gameLoop()
             if (bKey[5])
                 break;
 
-            if ((level < 9 && gametick % ((int)((10 - level) / 1.2)) == 0) || level >= 9 || bKey[2])
+            if ((level < 8 && gametick % ((int)((32 - (level * 3)) / 8)) == 0) || level >= 8 || bKey[2])
             {
                 if (canMove(currentPiece, currentRotation, currentX, currentY + 1))
                     currentY++;
@@ -362,14 +344,14 @@ void gameLoop()
                         level++;
                         animationticks = 15;
                     }
-                    displayBoard(((animationticks-- > 0) ? "LEVEL UP" : ""));
+                    displayBoard(((animationticks-- > 0) ? "  LEVEL UP   " : ""));
 
                     break;
                 }
             }
 
             placePiece(currentPiece, currentRotation, currentX, currentY, false);
-            displayBoard(((animationticks-- > 0) ? "LEVEL UP" : ""));
+            displayBoard(((animationticks-- > 0) ? "  LEVEL UP    " : ""));
 
             auto frameEnd = std::chrono::steady_clock::now();
             auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(frameEnd - frameStart).count();
@@ -384,7 +366,11 @@ void gameLoop()
         if (!canMove(currentPiece, 0, width / 2 - 2, 0))
         {
             displayBoard(((animationticks-- > 0) ? "LEVEL UP" : ""));
-            std::cout << "\n           GAME OVER!\n       FINAL SCORE : " << score << "\n";
+            std::cout << "\n\nGAME OVER!\nFINAL SCORE : " << score << "\n";
+            if (score > pixelrick)
+            {
+                std::cout << "You beat pixelrick!";
+            }
             break;
         }
     }
