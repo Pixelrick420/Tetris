@@ -329,7 +329,10 @@ void gameLoop()
                 rotateRight = false;
 
             if (bKey[5])
-                break;
+            {
+                std::cout << "\n\nYou have quit the game.";
+                exit(0);
+            }
 
             if ((level < 8 && gametick % ((int)((32 - (level * 3)) / 8)) == 0) || level >= 8 || bKey[2])
             {
