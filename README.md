@@ -14,7 +14,8 @@ A simple Tetris game implemented in C++ using basic console graphics and logic. 
 ![image](https://github.com/user-attachments/assets/ab3ce152-c78e-4726-bf3b-1d94fb66c282)        ![image](https://github.com/user-attachments/assets/2cdec77c-2874-417e-b86e-e03157433ee6)
 
 ### Level Select Menu
-![image](https://github.com/user-attachments/assets/86e41307-c49d-4fb6-8532-39f2ac289f4c)
+![image](https://github.com/user-attachments/assets/858f52cc-0afe-4297-af03-b2d135a38917)
+
 
 ### Requirements
 - A Windows environment with support for WinAPI (e.g., Windows 10 or newer).
