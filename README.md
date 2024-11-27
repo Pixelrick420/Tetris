@@ -41,7 +41,6 @@ Tetris.exe
 ```
 
 ### Gameplay Instructions
-- Use the following keys to control the game:
 - Right Arrow: Change focus in level select menu or Move the piece to the right in game.
 - Left Arrow: Change focus in level select menu or  Move the piece to the left in game.
 - Down Arrow: Decrement selected level in level select menu or Move the piece down in game.
@@ -50,8 +49,6 @@ Tetris.exe
 - X: Rotate the piece clockwise in game.
 - P: Pause the game.
 - Q: Quit / Exit program.
-- Clear lines by filling rows completely with blocks to earn points.
-- The game ends when a new piece cannot spawn at the top of the board.
 
 ### Scoring
 - Points are awarded for clearing lines:
