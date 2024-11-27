@@ -1,6 +1,6 @@
 # Tetris Game
 
-A simple Tetris game implemented in C++ using basic console graphics and logic. This was largely possible thanks to [this](https://youtu.be/8OK8_tHeCIA?si=s-Qwhgbe2SkM95fB) video by javidx9.
+A lightweight, colorful implementation of the classic Tetris game running in the Windows console. Built with performance and simplicity in mind, featuring smooth controls and retro-style visuals. This was largely possible thanks to [this](https://youtu.be/8OK8_tHeCIA?si=s-Qwhgbe2SkM95fB) video by javidx9.
 
 ### Features
 - Fully functional Tetris gameplay.
