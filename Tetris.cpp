@@ -273,30 +273,61 @@ void displayMenu(bool start)
     HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
     moveCursor(0, 0);
     int dummy = 0;
-    std::cout << "###########################################################             " << "\n";
-    std::cout << "## . . . . . . . . . . . . . . . . . . . . . . . . . . . ##             " << "\n";
-    std::cout << "## . . . . . . . . . . . . . . . . . . . . . . . . . . . ##             " << "\n";
-    std::cout << "## . . . . . . . . . . . . . . . . . . . . . . . . . . . ##             " << "\n";
-    std::cout << "## . . . . . . . . . . . . . . . . . . . . . . . . . . . ##             " << "\n";
-    std::cout << "##                                                       ##             " << "\n";
-    std::cout << "## [][][][] [][][][] [][][][] [][][][] [][][][] [][][][] ##             " << "\n";
-    std::cout << "##    []    []          []    []    []    []    []       ##             " << "\n";
-    std::cout << "##    []    [][][]      []    [][][][]    []    [][][][] ##             " << "\n";
-    std::cout << "##    []    []          []    []   []     []          [] ##             " << "\n";
-    std::cout << "##    []    [][][][]    []    []    [] [][][][] [][][][] ##             " << "\n";
-    std::cout << "##                                                       ##             " << "\n";
-    std::cout << "## . . . . . . . . . . . . . . . . . . . . . . . . . . . ##             " << "\n";
-    std::cout << "## . . . . . . . . . . . . . . . . . . . . . . . . . . . ##             " << "\n";
-    std::cout << "## . . . . . . . . . . . . . . . . . . . . . . . . . . . ##             " << "\n";
-    std::cout << "## . . . . . . . . . . . . . . . . . . . . . . . . . . . ##             " << "\n";
-    std::cout << "## . . . . . . . . . . . . . . . . . . . . . . . . . . . ##             " << "\n";
-    std::cout << "## . . . . [         ] . . . . . . . [         ] . . . . ##             " << "\n";
+    int levelColours[] = {4, 2, 3};
+    std::string logo =
+        "###########################################################             \n"
+        "## . . . . . . . . . . . . . . . . . . . . . . . . . . . ##             \n"
+        "## . . . . . . . . . . . . . . . . . . . . . . . . . . . ##             \n"
+        "## . . . . . . . . . . . . . . . . . . . . . . . . . . . ##             \n"
+        "## . . . . . . . . . . . . . . . . . . . . . . . . . . . ##             \n"
+        "##                                                       ##             \n"
+        "## TTTTTTTT EEEEEEEE TTTTTTTT RRRRRRRR IIIIIIII SSSSSSSS ##             \n"
+        "##    TT    EE          TT    RR    RR    II    SS       ##             \n"
+        "##    TT    EEEEEE      TT    RRRRRRRR    II    SSSSSSSS ##             \n"
+        "##    TT    EE          TT    RR   RR     II          SS ##             \n"
+        "##    TT    EEEEEEEE    TT    RR    RR IIIIIIII SSSSSSSS ##             \n"
+        "##                                                       ##             \n"
+        "## . . . . . . . . . . . . . . . . . . . . . . . . . . . ##             \n"
+        "## . . . . . . . . . . . . . . . . . . . . . . . . . . . ##             \n"
+        "## . . . . . . . . . . . . . . . . . . . . . . . . . . . ##             \n"
+        "## . . . . . . . . . . . . . . . . . . . . . . . . . . . ##             \n"
+        "## . . . . . . . . . . . . . . . . . . . . . . . . . . . ##             ";
+
+    for (int i = 0; i < logo.length() - 1; i += 2)
+    {
+        char c = logo[i];
+        if (c == 'T')
+        {
+            SetConsoleTextAttribute(consoleHandle, 4);
+            std::cout << "[]";
+            SetConsoleTextAttribute(consoleHandle, 15);
+        }
+        else if (c == 'E' || c == 'I')
+        {
+            SetConsoleTextAttribute(consoleHandle, 3);
+            std::cout << "[]";
+            SetConsoleTextAttribute(consoleHandle, 15);
+        }
+        else if (c == 'R' || c == 'S')
+        {
+            SetConsoleTextAttribute(consoleHandle, 2);
+            std::cout << "[]";
+            SetConsoleTextAttribute(consoleHandle, 15);
+        }
+        else
+        {
+            std::cout << c;
+            i--;
+        }
+    }
+
+    std::cout << "\n## . . . . [         ] . . . . . . . [         ] . . . . ##             " << "\n";
     std::cout << "## . . . . [";
-    ((start) ? dummy = 1 : SetConsoleTextAttribute(consoleHandle, 3));
+    ((start) ? dummy = 1 : SetConsoleTextAttribute(consoleHandle, levelColours[(level % 3)]));
     std::cout << " LEVEL " << level << " ";
     SetConsoleTextAttribute(consoleHandle, 15);
     std::cout << "] . . . . . . . [";
-    ((start) ? SetConsoleTextAttribute(consoleHandle, 3) : dummy = 0);
+    ((start) ? SetConsoleTextAttribute(consoleHandle, levelColours[(level % 3)]) : dummy = 0);
     std::cout << "  START  ";
     SetConsoleTextAttribute(consoleHandle, 15);
     std::cout << "] . . . . ##             " << "\n";
@@ -464,10 +495,10 @@ void startMenu()
         for (int i = 0; i < 6; i++)
             bKey[i] = ((0x8000 & GetAsyncKeyState((unsigned char)"\x26\x28\x25\x27\x0DQ"[i])) != 0);
 
-        if ((frame % 4 == 0) && bKey[0] && !startSelected && level < 9)
+        if ((frame % 2 == 0) && bKey[0] && !startSelected && level < 9)
             level++;
 
-        else if ((frame % 4 == 0) && bKey[1] && !startSelected && level > 0)
+        else if ((frame % 2 == 0) && bKey[1] && !startSelected && level > 0)
             level--;
 
         else if (bKey[3] && !startSelected)
