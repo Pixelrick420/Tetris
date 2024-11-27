@@ -6,7 +6,7 @@ A simple Tetris game implemented in C++ using basic console graphics and logic. 
 - Fully functional Tetris gameplay.
 - Delayed Auto Shift input handling.(kind of)
 - Level selector menu and next piece overlay
-- Coloured ascii art graphics.
+- Ascii art console graphics.
 - Level based scoring system, game speed and colour schemes.
 
 ### Preview of the game (very proffesional gameplay)
