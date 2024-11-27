@@ -227,13 +227,20 @@ int clearLines()
         Sleep(((level < 10) ? 10 - level : 0));
     }
     int erased = 0;
-    for (int i = height - 1, erased = 0; i >= 0; --i)
+    for (int i = height - 1; i >= 0; i--)
     {
-        if (lineNumbers.count(i - erased))
+        if (lineNumbers.count(i - erased) > 0)
         {
-            ++erased;
-            for (int j = i; j > 0; --j)
-                std::copy(&board[j - 1][0], &board[j - 1][width], &board[j][0]);
+            lineNumbers.erase(i);
+            erased++;
+            for (int j = i; j > 0; j--)
+            {
+                for (int k = 0; k < width; k++)
+                {
+                    board[j][k] = board[j - 1][k];
+                }
+            }
+            i++;
         }
     }
 
