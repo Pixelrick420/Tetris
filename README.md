@@ -5,15 +5,16 @@ A simple Tetris game implemented in C++ using basic console graphics and logic. 
 ### Features
 - Fully functional Tetris gameplay.
 - Delayed Auto Shift input handling.(kind of)
-- Next Piece overlay
-- Coloured text-based graphics.
+- Level selector menu and next piece overlay
+- Coloured ascii art graphics.
 - Level based scoring system, game speed and colour schemes.
-- Game speed increases after each level.
 
 ### Preview of the game (very proffesional gameplay)
 
 ![image](https://github.com/user-attachments/assets/ab3ce152-c78e-4726-bf3b-1d94fb66c282)        ![image](https://github.com/user-attachments/assets/2cdec77c-2874-417e-b86e-e03157433ee6)
 
+### Level Select Menu
+![image](https://github.com/user-attachments/assets/86e41307-c49d-4fb6-8532-39f2ac289f4c)
 
 ### Requirements
 - A Windows environment with support for WinAPI (e.g., Windows 10 or newer).
@@ -40,11 +41,14 @@ Tetris.exe
 
 ### Gameplay Instructions
 - Use the following keys to control the game:
-- Right Arrow: Move the piece to the right.
-- Left Arrow: Move the piece to the left.
-- Down Arrow: Move the piece down.
-- Z: Rotate the piece counterclockwise.
-- X: Rotate the piece clockwise.
+- Right Arrow: Change focus in level select menu or Move the piece to the right in game.
+- Left Arrow: Change focus in level select menu or  Move the piece to the left in game.
+- Down Arrow: Decrement selected level in level select menu or Move the piece down in game.
+- Up Arrow: Increment selected level in level select menu.
+- Z: Rotate the piece counter clockwise in game.
+- X: Rotate the piece clockwise in game.
+- P: Pause the game.
+- Q: Quit / Exit program.
 - Clear lines by filling rows completely with blocks to earn points.
 - The game ends when a new piece cannot spawn at the top of the board.
 
