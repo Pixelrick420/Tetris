@@ -27,7 +27,7 @@ int level = 0;
 int score = 0;
 int linesCleared = 0;
 int lineThreshold = 12;
-int pixelrick = 148796;
+int pixelrick = 150640;
 int player = 0;
 
 std::set<int> lineNumbers;
@@ -65,36 +65,17 @@ void moveCursor(short x, short y)
     SetConsoleTextAttribute(consoleHandle, 15);
 }
 
-void hideCursor()
+inline void setCursorVisibility(bool visible)
 {
-    HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
-    CONSOLE_CURSOR_INFO info;
-    info.dwSize = 100;
-    info.bVisible = FALSE;
-    SetConsoleCursorInfo(consoleHandle, &info);
-}
-
-void showCursor()
-{
-    HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
-    CONSOLE_CURSOR_INFO info;
-    info.dwSize = 100;
-    info.bVisible = TRUE;
-    SetConsoleCursorInfo(consoleHandle, &info);
+    CONSOLE_CURSOR_INFO info = {100, visible};
+    SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info);
 }
 
 void init()
 {
     moveCursor(0, 0);
-    for (int i = 0; i < height; i++)
-    {
-        for (int j = 0; j < width; j++)
-        {
-            board[i][j] = 0;
-        }
-    }
-    score = 0;
-    linesCleared = 0;
+    score = linesCleared = 0;
+    std::fill(&board[0][0], &board[0][0] + sizeof(board) / sizeof(board[0][0]), 0);
 
     for (int i = 0; i < screenHeight; i++)
     {
@@ -246,20 +227,13 @@ int clearLines()
         Sleep(((level < 10) ? 10 - level : 0));
     }
     int erased = 0;
-    for (int i = height - 1; i >= 0; i--)
+    for (int i = height - 1, erased = 0; i >= 0; --i)
     {
-        if (lineNumbers.count(i - erased) > 0)
+        if (lineNumbers.count(i - erased))
         {
-            lineNumbers.erase(i);
-            erased++;
-            for (int j = i; j > 0; j--)
-            {
-                for (int k = 0; k < width; k++)
-                {
-                    board[j][k] = board[j - 1][k];
-                }
-            }
-            i++;
+            ++erased;
+            for (int j = i; j > 0; --j)
+                std::copy(&board[j - 1][0], &board[j - 1][width], &board[j][0]);
         }
     }
 
@@ -381,7 +355,7 @@ void gameLoop()
             else
                 movedRight = -1;
 
-            if ((movedRight == 0 || movedRight > 3) && canMove(currentPiece, currentRotation, currentX + 1, currentY))
+            if ((movedRight == 0 || movedRight > 2) && canMove(currentPiece, currentRotation, currentX + 1, currentY))
             {
                 currentX++;
             }
@@ -391,7 +365,7 @@ void gameLoop()
             else
                 movedLeft = -1;
 
-            if ((movedLeft == 0 || movedLeft > 3) && canMove(currentPiece, currentRotation, currentX - 1, currentY))
+            if ((movedLeft == 0 || movedLeft > 2) && canMove(currentPiece, currentRotation, currentX - 1, currentY))
             {
                 currentX--;
             }
@@ -525,7 +499,7 @@ int main()
 {
     srand(time(NULL));
     init();
-    hideCursor();
+    setCursorVisibility(false);
     startMenu();
     return 0;
 }
